@@ -17,9 +17,15 @@
 
     <modules>
         <module>Auth-Service-Accesos</module>
+        <module>Catalog-GarzonPro</module>
+        <module>Inventory-Service-Stock</module>
+        <module>Kds-Service-Cocina</module>
+        <module>Order-Service-Comandas</module>
+        <module>Payment-Service-Cuentas</module>
+        <module>Reporting-Service-Cierres</module>
+        <module>Status-Service-Notificaciones</module>
+        <module>Table-Service-Mesas</module>
         <module>User-Service-Personal</module>
-        <module>Table Service (Mesas)</module> <module>Order-Service-Comandas</module>
-        <module>Inventory Service (Stock)</module>
     </modules>
 
     <properties>
