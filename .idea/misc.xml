@@ -4,7 +4,6 @@
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/GarzonPro/pom.xml" />
         <option value="$PROJECT_DIR$/Auth-Service-Accesos/pom.xml" />
         <option value="$PROJECT_DIR$/Catalog Service (Menú)/pom.xml" />
@@ -16,8 +15,15 @@
         <option value="$PROJECT_DIR$/Reporting Service (Cierres)/pom.xml" />
         <option value="$PROJECT_DIR$/KDS-Service-Cocina/pom.xml" />
         <option value="$PROJECT_DIR$/Inventory Service (Stock)/pom.xml" />
+        <option value="$PROJECT_DIR$/catalog GarzonPro/pom.xml" />
+        <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/GarzonPro/pom.xml" />
+      </set>
+    </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="21" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="ms-17" project-jdk-type="JavaSDK" />
 </project>

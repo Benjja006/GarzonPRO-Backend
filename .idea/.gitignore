@@ -1,8 +1,32 @@
-# Default ignored files
-/shelf/
+# === IntelliJ & OS Files ===
+.idea/
+*.iml
+*.iws
+.shelf/
 /workspace.xml
-# Editor-based HTTP Client requests
 /httpRequests/
-# Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+Thumbs.db
+.DS_Store
+
+# === Maven & Build ===
+**/target/
+*.jar
+*.war
+*.ear
+
+# === SEGURIDAD Y CLOUD (CRUCIAL) ===
+# Ignora cualquier archivo del Wallet de Oracle por extensión
+*.sso
+*.jks
+*.p12
+*.ora
+# Ignora cualquier carpeta que contenga la palabra wallet (sin importar mayúsculas/minúsculas)
+*[Ww]allet*
+# Por si acaso tienes el wallet en la raíz
+/wallet/
+
+# === Logs ===
+*.log
+**/logs/
