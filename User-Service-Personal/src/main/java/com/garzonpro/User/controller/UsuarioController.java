@@ -1,10 +1,11 @@
 package com.garzonpro.User.controller;
 
-import com.garzonpro.User.dto.UsuarioRequestDTO; // Usa el DTO
+import com.garzonpro.User.dto.UsuarioRequestDTO;
+import com.garzonpro.User.dto.UsuarioUpdateDTO; // Importamos el nuevo DTO
 import com.garzonpro.User.model.Usuario;
 import com.garzonpro.User.service.UsuarioService;
-import jakarta.validation.Valid; // Para activar la validación
-import lombok.extern.slf4j.Slf4j; // Para los logs (IE 2.3.2)
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,6 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    // IE 2.2.2: Usamos @Valid para que el DTO valide los datos antes de entrar
-    // IE 2.3.1: Retornamos ResponseEntity con estado 201 (Created)
     @PostMapping("/create")
     public ResponseEntity<Usuario> crear(@Valid @RequestBody UsuarioRequestDTO dto) {
         log.info("Recibida petición para crear usuario: {}", dto.getCorreo());
@@ -41,5 +40,15 @@ public class UsuarioController {
         log.info("Consultando usuarios con rol: {}", rol);
         List<Usuario> usuarios = usuarioService.listarPorRol(rol);
         return ResponseEntity.ok(usuarios);
+    }
+
+    // 🌟 NUEVO ENDPOINT PARA ACTUALIZAR (PUT)
+    @PutMapping("/{id}")
+    public ResponseEntity<Usuario> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody UsuarioUpdateDTO dto) {
+        log.info("Recibida petición para actualizar usuario ID: {}", id);
+        Usuario usuarioActualizado = usuarioService.actualizarUsuario(id, dto);
+        return ResponseEntity.ok(usuarioActualizado);
     }
 }

@@ -21,7 +21,8 @@ public class KdsController {
     // Listar todos los tickets pendientes/preparando
     @GetMapping("/pendientes")
     public List<TicketCocina> obtenerPendientes() {
-        return repository.findByEstadoNot("LISTO");
+        // Llamamos al nuevo nombre del método
+        return repository.findByEstadoGeneralNot("LISTO");
     }
 
     // Recibir un nuevo ticket (esto lo llamará el Order-Service después)

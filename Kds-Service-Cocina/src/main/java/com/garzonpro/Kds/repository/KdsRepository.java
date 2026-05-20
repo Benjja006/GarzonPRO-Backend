@@ -3,10 +3,11 @@ package com.garzonpro.Kds.repository;
 import com.garzonpro.Kds.model.TicketCocina;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 @Repository
 public interface KdsRepository extends JpaRepository<TicketCocina, Long> {
-    // Para ver solo lo que falta por cocinar
-    List<TicketCocina> findByEstadoNot(String estado);
+    // Cambiamos "Estado" por "EstadoGeneral"
+    List<TicketCocina> findByEstadoGeneralNot(String estadoGeneral);
 }
