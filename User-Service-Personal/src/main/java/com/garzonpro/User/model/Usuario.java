@@ -8,6 +8,7 @@ import lombok.Data;
 @Data // Genera Getters y Setters automáticamente con Lombok
 public class Usuario {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUsuario;
 
     @NotBlank(message = "El nombre es obligatorio")
