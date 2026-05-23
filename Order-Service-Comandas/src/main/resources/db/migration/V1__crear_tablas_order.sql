@@ -11,6 +11,6 @@ CREATE TABLE IF NOT EXISTS detalle_pedido (
                                               id_plato BIGINT,
                                               nombre_plato VARCHAR(255),
     cantidad INT,
-    precio_unitario DOUBLE,
+    precio_unitario_al_momento_venta DECIMAL(10,2),
     CONSTRAINT fk_detalle_pedido FOREIGN KEY (id_pedido) REFERENCES pedido(id_pedido) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

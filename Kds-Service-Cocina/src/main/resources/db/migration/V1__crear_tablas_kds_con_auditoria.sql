@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS ticket_cocina (
                                              estado_general VARCHAR(50) DEFAULT 'PENDIENTE',
     hora_llegada DATETIME NOT NULL,
     tiempo_preparacion INT DEFAULT 0,
-    nivel_alerta_demora VARCHAR(50) DEFAULT 'NORMAL'
+    nivel_alerta_demora VARCHAR(50) NOT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS item_cocina (

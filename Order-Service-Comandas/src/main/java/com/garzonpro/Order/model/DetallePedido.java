@@ -3,6 +3,8 @@ package com.garzonpro.Order.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Entity
 @Data
 public class DetallePedido {
@@ -19,5 +21,5 @@ public class DetallePedido {
     private Long idPlato;
     private String nombrePlato;
     private Integer cantidad;
-    private Double precioUnitarioAlMomentoVenta;
+    private BigDecimal precioUnitarioAlMomentoVenta;
 }

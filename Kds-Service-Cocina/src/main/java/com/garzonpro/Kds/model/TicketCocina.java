@@ -24,6 +24,7 @@ public class TicketCocina {
     private Integer tiempoPreparacion = 0;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "nivel_alerta_demora", columnDefinition = "varchar(255)")
     private EnumAlertaDemora nivelAlertaDemora = EnumAlertaDemora.NORMAL;
 
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)

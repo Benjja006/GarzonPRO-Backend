@@ -2,6 +2,7 @@ package com.garzonpro.Order.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,8 @@ public class Pedido {
     private Long idMesa;
 
     private String estadoGeneral = "ABIERTO";
-    private Double totalParcial = 0.0;
+    @Column(name = "total_parcial", columnDefinition = "DOUBLE")
+    private BigDecimal totalParcial = BigDecimal.valueOf(0);
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetallePedido> detalles = new ArrayList<>();
