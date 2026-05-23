@@ -1,88 +1,97 @@
 package com.garzonpro.Auth.service;
 
-import com.garzonpro.Auth.client.UserClient;
+import com.garzonpro.Auth.dto.LoginRequestDTO;
 import com.garzonpro.Auth.dto.RegisterRequestDTO;
 import com.garzonpro.Auth.model.Credencial;
 import com.garzonpro.Auth.model.Sesion;
 import com.garzonpro.Auth.repository.CredencialRepository;
 import com.garzonpro.Auth.repository.SesionRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
+import com.garzonpro.Auth.client.UserClient;
+import com.garzonpro.Auth.exception.AuthException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Slf4j // Agregamos SLF4J para logs
 @Service
 public class AuthService {
-    @Autowired
-    private CredencialRepository credencialRepo;
 
-    @Autowired
-    private SesionRepository sesionRepo;
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
-    @Autowired
-    private UserClient userClient; // <--- NUEVO: Inyectar el "teléfono" para llamar a User-Service
+    private final CredencialRepository credencialRepo;
+    private final SesionRepository sesionRepo;
+    private final UserClient userClient;
 
-    public Credencial registrarUsuario(RegisterRequestDTO dto) {
-        log.info("Iniciando registro para el usuario: {}", dto.getUsername());
-
-        // 1. Guardar en la base de datos de AUTH (garzonpro_auth)
-        Credencial nueva = new Credencial();
-        nueva.setUsername(dto.getUsername());
-        nueva.setPinUsuario(dto.getPinUsuario());
-        nueva.setIdUsuario(dto.getIdUsuario());
-
-        Credencial guardada = credencialRepo.save(nueva);
-        log.info("Usuario {} registrado en AUTH con éxito", guardada.getUsername());
-
-        // 2. NUEVO: Llamar al microservicio de USER para crear el perfil
-        try {
-            log.info("Llamando a User-Service para crear el perfil del ID: {}", dto.getIdUsuario());
-            userClient.crearPerfilUsuario(dto);
-            log.info("Perfil creado exitosamente en el microservicio de Usuarios");
-        } catch (Exception e) {
-            // Es vital capturar la excepción por si el User-Service está apagado
-            log.error("No se pudo crear el perfil en User-Service: {}", e.getMessage());
-        }
-
-        return guardada;
+    public AuthService(CredencialRepository credencialRepo, SesionRepository sesionRepo, UserClient userClient) {
+        this.credencialRepo = credencialRepo;
+        this.sesionRepo = sesionRepo;
+        this.userClient = userClient;
     }
 
     @Transactional
-    public String login(String username, String pin) {
-        log.info("Intento de login para usuario: {}", username);
+    public String registrarUsuario(RegisterRequestDTO dto) {
+        log.info("Iniciando solicitud de registro para el username: {}", dto.getUsername());
 
-        Credencial cred = credencialRepo.findByUsername(username)
-                .filter(c -> c.getPinUsuario().equals(pin))
-                .orElseThrow(() -> {
-                    log.error("Credenciales inválidas para usuario: {}", username);
-                    return new RuntimeException("Credenciales inválidas");
+        if (credencialRepo.existsById(dto.getUsername())) {
+            log.warn("Fallo de registro: El username {} ya está ocupado", dto.getUsername());
+            throw new AuthException("El nombre de usuario ya se encuentra en uso", HttpStatus.BAD_REQUEST);
+        }
+
+        Long nuevoIdUsuario = System.currentTimeMillis();
+        dto.setIdUsuario(nuevoIdUsuario);
+
+        try {
+            log.info("Enviando comando de creación de perfil a User-Service para el ID: {}", nuevoIdUsuario);
+            userClient.crearPerfilUsuario(dto);
+        } catch (Exception e) {
+            log.error("Fallo crítico en comunicación distribuida con User-Service: {}", e.getMessage());
+            throw new AuthException("El registro no se pudo procesar: Servicio de perfiles no disponible", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
+        Credencial c = new Credencial();
+        c.setUsername(dto.getUsername());
+        c.setPinUsuario(dto.getPin());
+        c.setIdUsuario(nuevoIdUsuario);
+        credencialRepo.save(c);
+
+        log.info("Usuario {} registrado con éxito bajo el ID {}", dto.getUsername(), nuevoIdUsuario);
+        return "Usuario registrado de manera exitosa";
+    }
+
+    @Transactional
+    public String login(LoginRequestDTO dto) {
+        log.info("Procesando credenciales de acceso para el username: {}", dto.getUsername());
+
+        Credencial c = credencialRepo.findById(dto.getUsername())
+                .orElseThrow(() -> new AuthException("Credenciales de acceso inválidas", HttpStatus.UNAUTHORIZED));
+
+        if (!c.getPinUsuario().equals(dto.getPin())) {
+            log.warn("Fallo de autenticación: PIN erróneo para el username {}", dto.getUsername());
+            throw new AuthException("Credenciales de acceso inválidas", HttpStatus.UNAUTHORIZED);
+        }
+
+        sesionRepo.findFirstByIdUsuarioAndFechaFinAfter(c.getIdUsuario(), LocalDateTime.now())
+                .ifPresent(sesionActiva -> {
+                    sesionActiva.setFechaFin(LocalDateTime.now());
+                    sesionRepo.save(sesionActiva);
+                    log.info("Sesión activa anterior forzada a expirar para el usuario ID: {}", c.getIdUsuario());
                 });
 
         String token = UUID.randomUUID().toString();
-        cred.setTokenSesion(token);
-        credencialRepo.save(cred);
+        c.setTokenSesion(token);
+        credencialRepo.save(c);
 
-        Sesion nuevaSesion = new Sesion();
-        nuevaSesion.setIdUsuario(cred.getIdUsuario());
-        nuevaSesion.setFechaInicio(LocalDateTime.now());
-        nuevaSesion.setFechaFin(LocalDateTime.now().plusMinutes(30));
-        nuevaSesion.setRolUsuario("USER");
-        sesionRepo.save(nuevaSesion);
+        Sesion s = new Sesion();
+        s.setIdUsuario(c.getIdUsuario());
+        s.setFechaInicio(LocalDateTime.now());
+        s.setFechaFin(LocalDateTime.now().plusMinutes(30));
+        sesionRepo.save(s);
 
-        log.info("Login exitoso. Sesión creada para usuario: {}", username);
+        log.info("Autenticación exitosa. Token emitido para el usuario {}", dto.getUsername());
         return token;
-    }
-
-    public boolean validateToken(String token) {
-        log.info("Validando token de sesión...");
-        return credencialRepo.findByTokenSesion(token)
-                .map(cred -> sesionRepo.findFirstByIdUsuarioOrderByFechaInicioDesc(cred.getIdUsuario())
-                        .map(sesion -> sesion.getFechaFin().isAfter(LocalDateTime.now()))
-                        .orElse(false))
-                .orElse(false);
     }
 }

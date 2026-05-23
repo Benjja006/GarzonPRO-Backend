@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Inventory Service (Stock)/mi-microservicio1 (2).iml" filepath="$PROJECT_DIR$/Inventory Service (Stock)/mi-microservicio1 (2).iml" />
+      <module fileurl="file://$PROJECT_DIR$/Reporting Service (Cierres)/mi-microservicio1 (6).iml" filepath="$PROJECT_DIR$/Reporting Service (Cierres)/mi-microservicio1 (6).iml" />
+      <module fileurl="file://$PROJECT_DIR$/Table Service (Mesas)/mi-microservicio1 (8).iml" filepath="$PROJECT_DIR$/Table Service (Mesas)/mi-microservicio1 (8).iml" />
+      <module fileurl="file://$PROJECT_DIR$/GarzonPro/ms-microservicio1.iml" filepath="$PROJECT_DIR$/GarzonPro/ms-microservicio1.iml" />
+    </modules>
+  </component>
+</project>

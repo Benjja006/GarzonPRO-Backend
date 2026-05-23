@@ -3,42 +3,57 @@ package com.garzonpro.User.service;
 import com.garzonpro.User.dto.UsuarioRequestDTO;
 import com.garzonpro.User.model.Usuario;
 import com.garzonpro.User.repository.UsuarioRepository;
+import com.garzonpro.User.exception.UserException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
-@Slf4j
 @Service
+@Slf4j
 public class UsuarioService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepo;
+    private final UsuarioRepository repo;
 
-    // Cambiamos el parámetro de 'Usuario' a 'UsuarioRequestDTO'
+    public UsuarioService(UsuarioRepository repo) {
+        this.repo = repo;
+    }
+
+    @Transactional
     public Usuario crearUsuario(UsuarioRequestDTO dto) {
-        log.info("Procesando creación de usuario para: {}", dto.getCorreo());
+        log.info("Iniciando creación de perfil para el correo electrónico: {}", dto.getCorreo());
 
-        // PASO CLAVE: Mapear el DTO a la Entidad
-        Usuario usuario = new Usuario();
-        usuario.setNombre(dto.getNombre());
-        usuario.setApellido(dto.getApellido());
-        usuario.setEmail(dto.getCorreo());
+        // Regla de Negocio: Validar unicidad del correo
+        if (repo.findByCorreo(dto.getCorreo()).isPresent()) {
+            log.warn("Fallo de negocio: El correo {} ya está registrado", dto.getCorreo());
+            throw new UserException("El correo electrónico ya se encuentra registrado en el sistema", HttpStatus.BAD_REQUEST);
+        }
 
-        // Si tu entidad Usuario tiene un campo idUsuario, lo seteamos
-        // Esto es vital para la relación con Auth-Service
-        usuario.setIdUsuario(dto.getIdUsuario());
+        Usuario u = new Usuario();
+        u.setIdUsuario(dto.getIdUsuario()); // Mapeo del id de Auth-Service
+        u.setNombre(dto.getNombre());
+        u.setApellido(dto.getApellido());
+        u.setCorreo(dto.getCorreo());
 
-        return usuarioRepo.save(usuario);
+        // Manejo del rol
+        u.setRol(dto.getRol() != null ? dto.getRol().toUpperCase() : "USER");
+
+        Usuario guardado = repo.save(u);
+        log.info("Perfil de usuario creado exitosamente con ID Sincronizado: {}", guardado.getIdUsuario());
+        return guardado;
     }
 
-    public List<Usuario> listarTodos() {
-        return usuarioRepo.findAll();
+    @Transactional(readOnly = true)
+    public List<Usuario> obtenerTodos() {
+        log.info("Ejecutando lectura completa de usuarios en la base de datos");
+        return repo.findAll();
     }
 
-    public List<Usuario> listarPorRol(String rol) {
-        // Asumiendo que tienes este método en el repository
-        return usuarioRepo.findByRol(rol);
+    @Transactional(readOnly = true)
+    public Usuario obtenerPorId(Long id) {
+        log.info("Buscando perfil de usuario asociado al ID: {}", id);
+        return repo.findById(id)
+                .orElseThrow(() -> new UserException("No se encontró ningún usuario con el ID especificado", HttpStatus.NOT_FOUND));
     }
 }

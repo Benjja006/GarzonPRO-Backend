@@ -8,13 +8,16 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Table-Service-Java" />
+        <module name="mi-microservicio1 (1)" />
         <module name="Catalog-GarzonPro" />
         <module name="Kds-Service-Cocina" />
         <module name="mi-microservicio1 (7)" />
         <module name="Inventory-Service-Stock" />
         <module name="mi-microservicio1 (9)" />
-        <module name="mi-microservicio1 (8)" />
+        <module name="mi-microservicio1 (3)" />
         <module name="Status-Service" />
+        <module name="mi-microservicio1 (5)" />
+        <module name="mi-microservicio1 (4)" />
         <module name="Auth-Service-Accesos" />
         <module name="Reporting-Service-Cierres" />
         <module name="Table-Service-Mesas" />
@@ -28,8 +31,12 @@
     <bytecodeTargetLevel>
       <module name="GarzonPro" target="17" />
       <module name="mi-microservicio1" target="17" />
+      <module name="mi-microservicio1 (2)" target="17" />
       <module name="mi-microservicio1 (4) (org.springframework.boot)" target="17" />
+      <module name="mi-microservicio1 (6)" target="17" />
       <module name="mi-microservicio1 (7) (org.springframework.boot)" target="1.5" />
+      <module name="mi-microservicio1 (8)" target="1.5" />
+      <module name="ms-microservicio1" target="17" />
       <module name="ms-microservicio1 (1)" target="17" />
     </bytecodeTargetLevel>
   </component>
@@ -50,8 +57,13 @@
       <module name="Table-Service-Mesas" options="-parameters" />
       <module name="User-Service-Personal" options="-parameters" />
       <module name="mi-microservicio1" options="-parameters" />
+      <module name="mi-microservicio1 (1)" options="-parameters" />
       <module name="mi-microservicio1 (1) (org.springframework.boot)" options="-parameters" />
+      <module name="mi-microservicio1 (3)" options="-parameters" />
+      <module name="mi-microservicio1 (4)" options="-parameters" />
       <module name="mi-microservicio1 (4) (org.springframework.boot)" options="-parameters" />
+      <module name="mi-microservicio1 (5)" options="-parameters" />
+      <module name="mi-microservicio1 (7)" options="-parameters" />
       <module name="mi-microservicio1 (9)" options="-parameters" />
       <module name="ms-microservicio1 (1)" options="-parameters" />
     </option>
