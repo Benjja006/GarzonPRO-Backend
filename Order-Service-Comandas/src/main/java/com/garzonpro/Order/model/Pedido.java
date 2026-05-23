@@ -21,4 +21,12 @@ public class Pedido {
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetallePedido> detalles = new ArrayList<>();
+
+    public void agregarDetalle(DetallePedido detalle) {
+        if (detalles == null) {
+            detalles = new ArrayList<>();
+        }
+        detalles.add(detalle);
+        detalle.setPedido(this); // Sincroniza la relación bidireccional
+    }
 }
