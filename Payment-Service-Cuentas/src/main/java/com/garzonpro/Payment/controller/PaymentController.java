@@ -1,34 +1,63 @@
 package com.garzonpro.Payment.controller;
 
-import com.garzonpro.Payment.model.Pago;
-import com.garzonpro.Payment.repository.PagoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.garzonpro.Payment.dto.PagoRequestDTO;
+import com.garzonpro.Payment.dto.PagoResponseDTO;
+import com.garzonpro.Payment.service.PagoService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/payments")
+@RequiredArgsConstructor
 public class PaymentController {
 
-    @Autowired
-    private PagoRepository repository;
+    private final PagoService pagoService;
 
-    // Registrar un nuevo pago
+    /**
+     * POST /payments/procesar
+     * Registra un nuevo pago para un pedido.
+     */
     @PostMapping("/procesar")
-    public Pago procesarPago(@RequestBody Pago pago) {
-        return repository.save(pago);
+    public ResponseEntity<PagoResponseDTO> procesarPago(@Valid @RequestBody PagoRequestDTO dto) {
+        log.info("Solicitud recibida para procesar pago del pedido ID: {}", dto.getIdPedido());
+        PagoResponseDTO response = pagoService.procesarPago(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // Ver historial de pagos
+    /**
+     * GET /payments/historial
+     * Retorna el historial completo de pagos.
+     */
     @GetMapping("/historial")
-    public List<Pago> obtenerTodos() {
-        return repository.findAll();
+    public ResponseEntity<List<PagoResponseDTO>> obtenerTodos() {
+        log.info("Solicitud de historial de pagos recibida");
+        return ResponseEntity.ok(pagoService.obtenerTodos());
     }
 
-    // Obtener un pago específico por ID
+    /**
+     * GET /payments/{id}
+     * Retorna un pago específico por su ID.
+     */
     @GetMapping("/{id}")
-    public Pago obtenerPago(@PathVariable Long id) {
-        return repository.findById(id).orElseThrow();
+    public ResponseEntity<PagoResponseDTO> obtenerPago(@PathVariable Long id) {
+        log.info("Solicitud de pago con ID: {}", id);
+        return ResponseEntity.ok(pagoService.obtenerPorId(id));
+    }
+
+    /**
+     * GET /payments/pedido/{idPedido}
+     * Retorna todos los pagos asociados a un pedido.
+     */
+    @GetMapping("/pedido/{idPedido}")
+    public ResponseEntity<List<PagoResponseDTO>> obtenerPorPedido(@PathVariable Long idPedido) {
+        log.info("Solicitud de pagos del pedido ID: {}", idPedido);
+        return ResponseEntity.ok(pagoService.obtenerPorPedido(idPedido));
     }
 }
