@@ -3,6 +3,8 @@ package com.garzonpro.Kds.controller;
 import com.garzonpro.Kds.model.TicketCocina;
 import com.garzonpro.Kds.repository.KdsRepository;
 import com.garzonpro.Kds.service.KdsService;
+import com.garzonpro.Kds.dto.TicketCocinaRequestDTO;
+import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +29,14 @@ public class KdsController {
 
     // Recibir un nuevo ticket (esto lo llamará el Order-Service después)
     @PostMapping("/nuevo")
-    public TicketCocina recibirTicket(@RequestBody TicketCocina ticket) {
-        return repository.save(ticket);
+    public ResponseEntity<TicketCocina> recibirTicket(@RequestBody TicketCocinaRequestDTO dto) {
+        // Transformamos el DTO que viene de Order-Service a una Entidad de KDS
+        TicketCocina nuevoTicket = new TicketCocina();
+        nuevoTicket.setIdPedido(dto.getIdPedido());
+        nuevoTicket.setIdMesa(dto.getIdMesa());
+        nuevoTicket.setEstadoGeneral("En Preparación");
+
+        return ResponseEntity.ok(repository.save(nuevoTicket));
     }
 
     // Marcar como listo
