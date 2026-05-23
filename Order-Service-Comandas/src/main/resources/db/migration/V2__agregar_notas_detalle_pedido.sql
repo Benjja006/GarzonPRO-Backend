@@ -1,0 +1,2 @@
+ALTER TABLE detalle_pedido
+    ADD COLUMN notas VARCHAR(255) DEFAULT NULL;
