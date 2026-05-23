@@ -1,13 +1,12 @@
-package com.ProyectoRestaurant.Table.Service.Mesas;
+package com.garzonpro.Table;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TableApplicationTests {
+class TableServiceMesasApplicationTests {
 
 	@Test
 	void contextLoads() {
 	}
-
 }

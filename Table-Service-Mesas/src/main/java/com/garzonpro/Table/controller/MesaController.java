@@ -1,8 +1,8 @@
 package com.garzonpro.Table.controller;
 
 import com.garzonpro.Table.dto.MesaDTO;
-import com.garzonpro.Table.model.Mesa;
 import com.garzonpro.Table.model.EnumTableStatus;
+import com.garzonpro.Table.model.Mesa;
 import com.garzonpro.Table.service.MesaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,26 +13,24 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tables/mesas")
+@RequestMapping("/tables")
 public class MesaController {
 
     @Autowired
     private MesaService mesaService;
 
-    // Crear una mesa nueva (IE 2.3.1: Retorna 201 Created)
     @PostMapping
     public ResponseEntity<Mesa> crear(@Valid @RequestBody MesaDTO dto) {
+        // CORRECCIÓN CRÍTICA: Se repara la asignación de variable rota en el PDF original
         Mesa nuevaMesa = mesaService.crearMesa(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaMesa);
     }
 
-    // Listar todas las mesas para que el Garzón las vea en su app
     @GetMapping
     public ResponseEntity<List<Mesa>> listar() {
         return ResponseEntity.ok(mesaService.listarTodas());
     }
 
-    // Actualizar solo el estado (Patch es más eficiente para cambios parciales)
     @PatchMapping("/{id}/estado")
     public ResponseEntity<Mesa> actualizarEstado(
             @PathVariable Long id,
