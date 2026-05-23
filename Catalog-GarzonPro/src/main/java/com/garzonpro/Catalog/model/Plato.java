@@ -17,6 +17,7 @@ public class Plato {
 
     private Double precio;
 
-    @Column(name = "id_categoria")
-    private Long idCategoria;
+    @ManyToOne
+    @JoinColumn(name = "id_categoria", nullable = false)
+    private Categoria categoria;
 }

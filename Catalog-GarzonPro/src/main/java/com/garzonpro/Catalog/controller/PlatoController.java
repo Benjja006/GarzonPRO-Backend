@@ -23,8 +23,14 @@ public class PlatoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(platoService.crearPlato(dto));
     }
 
+    // NUEVO: Método GET expuesto para usar la función del Service
     @GetMapping
     public ResponseEntity<List<Plato>> listarTodos() {
         return ResponseEntity.ok(platoService.listarTodos());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Plato> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(platoService.obtenerPorId(id));
     }
 }
