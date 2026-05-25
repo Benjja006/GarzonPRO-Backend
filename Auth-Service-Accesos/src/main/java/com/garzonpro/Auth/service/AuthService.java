@@ -1,5 +1,6 @@
 package com.garzonpro.Auth.service;
 
+import com.garzonpro.Auth.client.UserFeignClient;
 import com.garzonpro.Auth.dto.LoginRequestDTO;
 import com.garzonpro.Auth.dto.RegisterRequestDTO;
 import com.garzonpro.Auth.model.Credencial;
@@ -11,6 +12,7 @@ import com.garzonpro.Auth.exception.AuthException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,8 @@ public class AuthService {
     private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     private final CredencialRepository credencialRepo;
+    @Autowired
+    private UserFeignClient userFeignClient;
     private final SesionRepository sesionRepo;
     private final UserClient userClient;
 
@@ -72,6 +76,22 @@ public class AuthService {
         if (!c.getPinUsuario().equals(dto.getPin())) {
             log.warn("Fallo de autenticación: PIN erróneo para el username {}", dto.getUsername());
             throw new AuthException("Credenciales de acceso inválidas", HttpStatus.UNAUTHORIZED);
+        }
+
+        try {
+            log.info("Estableciendo conexión por OpenFeign con User-Service para consultar el ID: {}", c.getIdUsuario());
+
+            // Llama por red a user-service pasando el id del usuario
+            Object datosDelUsuario = userFeignClient.obtenerUsuarioPorId(c.getIdUsuario());
+
+            // Mensaje que verás en tu consola para comprobar que funcionó
+            System.out.println("-> ¡CONEXIÓN EXITOSA CON USER-SERVICE!");
+            System.out.println("-> Datos del empleado recibidos: " + datosDelUsuario);
+
+        } catch (Exception e) {
+            log.error("Error al intentar comunicarse con User-Service mediante OpenFeign: {}", e.getMessage());
+            // Si user-service está apagado, avisará y detendrá el proceso de login
+            throw new AuthException("No se pudo iniciar sesión: Servicio de usuarios no responde", HttpStatus.SERVICE_UNAVAILABLE);
         }
 
         sesionRepo.findFirstByIdUsuarioAndFechaFinAfter(c.getIdUsuario(), LocalDateTime.now())

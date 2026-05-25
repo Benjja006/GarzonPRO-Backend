@@ -33,11 +33,17 @@ public class StockController {
 
     // Endpoint manual para descontar (en el futuro lo hará el Order-Service)
     @PostMapping("/descontar")
-    public ResponseEntity<?> descontar(@RequestBody Map<String, Object> payload) {
-        Long idPlato = Long.valueOf(payload.get("idPlato").toString());
-        Integer cantidad = Integer.valueOf(payload.get("cantidad").toString());
+    public ResponseEntity<String> descontar(@Valid @RequestBody com.garzonpro.Inventory.dto.DescontarStockDTO dto) {
 
-        stockService.descontarStock(idPlato, cantidad);
-        return ResponseEntity.ok("Stock actualizado con éxito");
+        // 1. Verificamos si hay stock suficiente antes de descontar
+        boolean hayStock = stockService.verificarStock(dto.getIdPlato(), dto.getCantidad());
+        if (!hayStock) {
+            throw new IllegalArgumentException("No hay stock suficiente para el plato ID: " + dto.getIdPlato());
+        }
+
+        // 2. Procedemos a descontar
+        stockService.descontarStock(dto.getIdPlato(), dto.getCantidad());
+
+        return ResponseEntity.ok("Stock actualizado con éxito para el plato ID: " + dto.getIdPlato());
     }
 }
