@@ -20,9 +20,11 @@ public class Pedido {
     private List<DetallePedido> detalles = new ArrayList<>();
 
     public void agregarDetalle(DetallePedido detalle) {
-        detalles.add(detalle);
+        if (this.detalles == null) {
+            this.detalles = new ArrayList<>();
+        }
+        this.detalles.add(detalle);
         detalle.setPedido(this);
-        recalcularTotal();
     }
 
     public void recalcularTotal() {
