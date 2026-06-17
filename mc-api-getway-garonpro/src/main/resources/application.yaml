@@ -1,0 +1,22 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: mc-api-getway-garonpro
+  cloud:
+    gateway:
+      mvc:
+        routes:
+          - id: mc-AuthService
+            uri: http://localhost:8081
+            predicates:
+              - Path=/auth/**
+          - id: mc-UserService
+            uri: http://localhost:8082
+            predicates:
+              - Path=/usuarios/**
+          - id: mc-CatalogService
+            uri: http://localhost:8083
+            predicates:
+              - Path=/catalogo/platos/** 
+               -Path=/catalog/platos/** 
