@@ -18,5 +18,4 @@ spring:
           - id: mc-CatalogService
             uri: http://localhost:8083
             predicates:
-              - Path=/catalogo/platos/** 
-               -Path=/catalog/platos/** 
+              - Path=/catalog/**

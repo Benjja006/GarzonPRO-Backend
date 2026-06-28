@@ -114,4 +114,82 @@ public class AuthService {
         log.info("Autenticación exitosa. Token emitido para el usuario {}", dto.getUsername());
         return token;
     }
+
+    @Transactional
+    public void actualizarUsuario(Long idUsuario, RegisterRequestDTO dto) {
+        log.info("Iniciando actualización orquestada para el usuario ID: {}", idUsuario);
+
+        // 1. Buscar las credenciales actuales en Auth-Service
+        Credencial credencialAntigua = credencialRepo.findByIdUsuario(idUsuario)
+                .orElseThrow(() -> new AuthException("No existen credenciales para el ID: " + idUsuario, HttpStatus.NOT_FOUND));
+
+        // Comprobar si el usuario envió un username nuevo y diferente al que ya tiene
+        boolean cambiarUsername = dto.getUsername() != null
+                && !dto.getUsername().trim().isEmpty()
+                && !dto.getUsername().equals(credencialAntigua.getUsername());
+
+        if (cambiarUsername) {
+            // Validar que el nuevo username no esté ocupado por otra persona
+            if (credencialRepo.existsById(dto.getUsername())) {
+                throw new AuthException("El nuevo nombre de usuario ya está en uso", HttpStatus.BAD_REQUEST);
+            }
+
+            // Truco para JPA: Creamos una nueva credencial para poder cambiar el @Id (username)
+            Credencial credencialNueva = new Credencial();
+            credencialNueva.setUsername(dto.getUsername());
+            credencialNueva.setIdUsuario(idUsuario);
+            credencialNueva.setTokenSesion(credencialAntigua.getTokenSesion());
+
+            // Verificamos si también quiso cambiar el PIN
+            if (dto.getPin() != null && !dto.getPin().trim().isEmpty()) {
+                credencialNueva.setPinUsuario(dto.getPin());
+            } else {
+                credencialNueva.setPinUsuario(credencialAntigua.getPinUsuario());
+            }
+
+            // Borramos el registro viejo y guardamos el nuevo
+            credencialRepo.delete(credencialAntigua);
+            credencialRepo.save(credencialNueva);
+            log.info("Username y credenciales actualizados para el ID: {}", idUsuario);
+
+        } else {
+            // Si NO quiso cambiar el username, solo actualizamos el PIN (como lo teníamos antes)
+            if (dto.getPin() != null && !dto.getPin().trim().isEmpty()) {
+                credencialAntigua.setPinUsuario(dto.getPin());
+                credencialRepo.save(credencialAntigua);
+                log.info("PIN de acceso actualizado para el ID: {}", idUsuario);
+            }
+        }
+
+        // 2. Enviar los datos personales al User-Service a través del Feign Client
+        try {
+            userClient.actualizarPerfilUsuario(idUsuario, dto);
+            log.info("Datos personales enviados a User-Service para actualización.");
+        } catch (Exception e) {
+            log.error("Error al comunicarse con User-Service para actualizar perfil", e);
+            throw new AuthException("No se pudo actualizar el perfil en el servicio de usuarios", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    public void eliminarUsuario(Long idUsuario) {
+        log.info("Iniciando proceso de desvinculación para el empleado con ID: {}", idUsuario);
+
+        // 1. Buscar si existen credenciales
+        Credencial credencial = credencialRepo.findByIdUsuario(idUsuario)
+                .orElseThrow(() -> new AuthException("No existen credenciales para el ID: " + idUsuario, HttpStatus.NOT_FOUND));
+
+        // 2. Eliminar credenciales (Revoca el acceso al sistema inmediatamente)
+        credencialRepo.delete(credencial);
+        log.info("Credenciales de acceso eliminadas para el ID: {}", idUsuario);
+
+        // 3. Comunicarse con User-Service para eliminar los datos personales
+        try {
+            userClient.eliminarPerfilUsuario(idUsuario);
+            log.info("Orden enviada a User-Service: Perfil eliminado exitosamente.");
+        } catch (Exception e) {
+            log.error("Error al comunicarse con User-Service durante la eliminación", e);
+            throw new AuthException("Se eliminó el acceso, pero hubo un error al borrar el perfil en User-Service", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

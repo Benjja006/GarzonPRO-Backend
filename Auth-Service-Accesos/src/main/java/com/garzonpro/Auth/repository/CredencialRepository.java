@@ -6,4 +6,5 @@ import java.util.Optional;
 public interface CredencialRepository extends JpaRepository<Credencial, String> {
     Optional<Credencial> findByTokenSesion(String tokenSesion);
     Optional<Credencial> findByUsername(String username);
+    java.util.Optional<Credencial> findByIdUsuario(Long idUsuario);
 }

@@ -1,0 +1,208 @@
+======================================================
+MICROSERVICIO: AUTH-SERVICE
+======================================================
+
+======================================================
+1. REGISTRAR USUARIO
+======================================================
+MÉTODO: POST
+RUTA MC: http://localhost:8081/auth/register
+RUTA API: http://localhost:8080/auth/register
+BODY:
+{
+  "username": "usuario_prueba",
+  "pin": "1234",
+  "nombre": "Juan",
+  "apellido": "Pérez",
+  "correo": "juan@email.com",
+  "rol": "GARZON/ADMIN/COCINERO"
+}
+
+======================================================
+2. INICIAR SESIÓN (LOGIN)
+======================================================
+MÉTODO: POST
+RUTA MC: http://localhost:8081/auth/login
+RUTA API: http://localhost:8080/auth/login
+BODY:
+{
+  "username": "usuario_prueba",
+  "pin": "1234"
+}
+
+======================================================
+3. ACTUALIZAR DATOS DE USUARIO
+======================================================
+MÉTODO: PUT
+RUTA MC: http://localhost:8081/auth/usuarios/actualizar/{id}
+RUTA API: http://localhost:8080/auth/usuarios/actualizar/{id}
+BODY:
+{
+  "username": "usuario_admin",
+  "pin": "4321",
+  "nombre": "Juan",
+  "apellido": "Pérez",
+  "correo": "juan_nuevo@email.com",
+  "rol": "Administrador"
+}
+
+======================================================
+4. ELIMINAR USUARIO
+======================================================
+MÉTODO: DELETE
+RUTA MC: http://localhost:8081/auth/usuarios/eliminar/{id}
+RUTA API: http://localhost:8080/auth/usuarios/eliminar/{id}
+BODY: (Vacío)
+
+
+
+
+======================================================
+MICROSERVICIO: USER-SERVICE
+======================================================
+
+======================================================
+1. CREAR USUARIO
+======================================================
+MÉTODO: POST
+RUTA MC: http://localhost:8082/usuarios
+RUTA API: http://localhost:8080/usuarios
+BODY:
+{
+  "nombre": "Carlos",
+  "apellido": "Gómez",
+  "correo": "carlos.gomez@email.com",
+  "idUsuario": 1715456789012,
+  "rol": "Cocinero"
+}
+
+======================================================
+2. OBTENER TODOS LOS USUARIOS
+======================================================
+MÉTODO: GET
+RUTA MC: http://localhost:8082/usuarios
+RUTA API: http://localhost:8080/usuarios
+BODY: (Vacío)
+
+======================================================
+3. OBTENER USUARIO POR ID
+======================================================
+MÉTODO: GET
+RUTA MC: http://localhost:8082/usuarios/{id}
+RUTA API: http://localhost:8080/usuarios/{id}
+BODY: (Vacío)
+
+======================================================
+4. ACTUALIZAR USUARIO
+======================================================
+MÉTODO: PUT
+RUTA MC: http://localhost:8082/usuarios/{id}
+RUTA API: http://localhost:8080/usuarios/{id}
+BODY:
+{
+  "nombre": "Carlos Alberto",
+  "apellido": "Gómez",
+  "correo": "carlos.nuevo@email.com",
+  "rol": "Administrador"
+}
+
+======================================================
+5. ELIMINAR USUARIO
+======================================================
+MÉTODO: DELETE
+RUTA MC: http://localhost:8082/usuarios/{id}
+RUTA API: http://localhost:8080/usuarios/{id}
+BODY: (Vacío)
+
+
+
+======================================================
+MICROSERVICIO: CATALOG-SERVICE
+======================================================
+
+--- SECCIÓN: CATEGORÍAS ---
+
+======================================================
+1. CREAR CATEGORÍA
+======================================================
+MÉTODO: POST
+RUTA MC: http://localhost:8083/catalog/categorias
+RUTA API: http://localhost:8080/catalog/categorias
+BODY:
+{
+  "nombreCategoria": "Pastas"
+}
+
+======================================================
+2. OBTENER TODAS LAS CATEGORÍAS
+======================================================
+MÉTODO: GET
+RUTA MC: http://localhost:8083/catalog/categorias
+RUTA API: http://localhost:8080/catalog/categorias
+BODY: (Vacío)
+
+======================================================
+3. MODIFICAR CATEGORÍA
+======================================================
+MÉTODO: PUT
+RUTA MC: http://localhost:8083/catalog/categorias/1
+RUTA API: http://localhost:8080/catalog/categorias/1
+BODY:
+{
+  "nombreCategoria": "Pastas Frescas"
+}
+
+======================================================
+4. ELIMINAR CATEGORÍA
+======================================================
+MÉTODO: DELETE
+RUTA MC: http://localhost:8083/catalog/categorias/1
+RUTA API: http://localhost:8080/catalog/categorias/1
+BODY: (Vacío)
+
+--- SECCIÓN: PLATOS ---
+
+======================================================
+5. CREAR PLATO
+======================================================
+MÉTODO: POST
+RUTA MC: http://localhost:8083/catalog/platos
+RUTA API: http://localhost:8080/catalog/platos
+BODY:
+{
+  "nombrePlato": "Fettuccini con salsa blanca",
+  "precio": 8500.0,
+  "idCategoria": 1
+}
+
+* Nota: Asegúrate de crear primero la categoría para que el "idCategoria": 1 exista en tu base de datos antes de mandar este POST.
+
+======================================================
+6. OBTENER TODOS LOS PLATOS
+======================================================
+MÉTODO: GET
+RUTA MC: http://localhost:8083/catalog/platos
+RUTA API: http://localhost:8080/catalog/platos
+BODY: (Vacío)
+
+======================================================
+7. MODIFICAR PLATO
+======================================================
+MÉTODO: PUT
+RUTA MC: http://localhost:8083/catalog/platos/1
+RUTA API: http://localhost:8080/catalog/platos/1
+BODY:
+{
+  "nombrePlato": "Fettuccini Carbonara",
+  "precio": 9500.0,
+  "idCategoria": 1
+}
+
+======================================================
+8. ELIMINAR PLATO
+======================================================
+MÉTODO: DELETE
+RUTA MC: http://localhost:8083/catalog/platos/1
+RUTA API: http://localhost:8080/catalog/platos/1
+BODY: (Vacío)
+

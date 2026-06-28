@@ -14,6 +14,7 @@
         <module name="mi-microservicio1 (7)" />
         <module name="Inventory-Service-Stock" />
         <module name="mi-microservicio1 (9)" />
+        <module name="mc-api-getway-garonpro" />
         <module name="mi-microservicio1 (3)" />
         <module name="Status-Service" />
         <module name="mi-microservicio1 (5)" />
@@ -56,6 +57,7 @@
       <module name="Table-Service-Java" options="" />
       <module name="Table-Service-Mesas" options="-parameters" />
       <module name="User-Service-Personal" options="-parameters" />
+      <module name="mc-api-getway-garonpro" options="-parameters" />
       <module name="mi-microservicio1" options="-parameters" />
       <module name="mi-microservicio1 (1)" options="-parameters" />
       <module name="mi-microservicio1 (1) (org.springframework.boot)" options="-parameters" />

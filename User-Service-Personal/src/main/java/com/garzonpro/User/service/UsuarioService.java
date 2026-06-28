@@ -56,4 +56,45 @@ public class UsuarioService {
         return repo.findById(id)
                 .orElseThrow(() -> new UserException("No se encontró ningún usuario con el ID especificado", HttpStatus.NOT_FOUND));
     }
+
+    @Transactional
+    public Usuario actualizarUsuario(Long id, UsuarioRequestDTO dto) {
+        log.info("Actualizando perfil del usuario con ID: {}", id);
+
+        // 1. Buscar al usuario existente
+        Usuario usuario = repo.findById(id)
+                .orElseThrow(() -> new UserException("No se encontró ningún usuario con el ID especificado", HttpStatus.NOT_FOUND));
+
+        // 2. Validar que el nuevo correo no le pertenezca a otra persona
+        if (!usuario.getCorreo().equals(dto.getCorreo()) && repo.findByCorreo(dto.getCorreo()).isPresent()) {
+            throw new UserException("El nuevo correo ya se encuentra registrado en el sistema", HttpStatus.BAD_REQUEST);
+        }
+
+        // 3. Actualizar los datos (omitimos el ID)
+        usuario.setNombre(dto.getNombre());
+        usuario.setApellido(dto.getApellido());
+        usuario.setCorreo(dto.getCorreo());
+
+        if (dto.getRol() != null) {
+            usuario.setRol(dto.getRol().toUpperCase());
+        }
+
+        // 4. Guardar y retornar
+        Usuario guardado = repo.save(usuario);
+        log.info("Perfil de usuario actualizado exitosamente: {}", guardado.getIdUsuario());
+        return guardado;
+    }
+
+    @Transactional
+    public void eliminarUsuario(Long id) {
+        log.info("Iniciando eliminación del perfil de usuario con ID: {}", id);
+
+        // Verificar si el usuario existe antes de intentar borrarlo
+        if (!repo.existsById(id)) {
+            throw new UserException("No se encontró ningún usuario con el ID especificado para eliminar", HttpStatus.NOT_FOUND);
+        }
+
+        repo.deleteById(id);
+        log.info("Perfil de usuario con ID {} eliminado exitosamente de la base de datos", id);
+    }
 }
