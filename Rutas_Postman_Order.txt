@@ -1,0 +1,57 @@
+================================================================================
+GARZONPRO - MANUAL DETALLADO DE ENDPOINTS (TODOS LOS MÉTODOS DEL CONTROLADOR)
+================================================================================
+Todos los microservicios están centralizados a través del API Gateway.
+PUERTO DEL GATEWAY: 8080 (localhost)
+
+--------------------------------------------------------------------------------
+MICROSERVICIO: ORDER-SERVICE (Puerto Interno: 8086)
+--------------------------------------------------------------------------------
+Prefijo en Gateway: /orders
+
+MÉTODO 1: Abrir un nuevo pedido vacío para una mesa
+   - Tipo de Petición: POST
+   - URL: http://localhost:8080/orders/abrir/{idMesa}
+   - Ejemplo en Postman: http://localhost:8080/orders/abrir/5
+   - Body: Ninguno (none)
+   - Respuesta esperada (200 OK):
+     {
+         "idPedido": 2,
+         "idMesa": 5,
+         "estadoGeneral": "ABIERTO",
+         "totalParcial": 0.0,
+         "detalles": []
+     }
+
+MÉTODO 2: Agregar platos a un pedido existente
+   - Tipo de Petición: POST
+   - URL: http://localhost:8080/orders/{idPedido}/agregar
+   - Ejemplo en Postman: http://localhost:8080/orders/2/agregar
+   - Body (JSON):
+     {
+         "nombrePlato": "Fettuccine Alfredo",
+         "cantidad": 2,
+         "precioUnitario": 8500.0
+     }
+   - Respuesta esperada (200 OK):
+     {
+         "idPedido": 2,
+         "idMesa": 5,
+         "estadoGeneral": "ABIERTO",
+         "totalParcial": 17000.0,
+         "detalles": [
+             {
+                 "idDetalle": 1,
+                 "nombrePlato": "Fettuccine Alfredo",
+                 "cantidad": 2,
+                 "precioUnitario": 8500.0
+             }
+         ]
+     }
+
+MÉTODO 3: Ver el estado de un pedido (Obtener por ID)
+   - Tipo de Petición: GET
+   - URL: http://localhost:8080/orders/{id}
+   - Ejemplo en Postman: http://localhost:8080/orders/2
+   - Body: Ninguno (none)
+   - Respuesta esperada (200 OK): Retorna el JSON completo del pedido con sus ítems.

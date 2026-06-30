@@ -1,0 +1,23 @@
+================================================================================
+GARZONPRO - MANUAL DETALLADO DE ENDPOINTS (TODOS LOS MÉTODOS DEL CONTROLADOR)
+================================================================================
+Todos los microservicios están centralizados a través del API Gateway.
+PUERTO DEL GATEWAY: 8080 (localhost)
+--------------------------------------------------------------------------------
+MICROSERVICIO: KDS-SERVICE-COCINA (Puerto Interno: 8087)
+--------------------------------------------------------------------------------
+Prefijo en Gateway: /kds
+
+MÉTODO 1: Enviar/Crear un nuevo ticket a la cocina
+   - Tipo de Petición: POST
+   - URL: http://localhost:8080/kds/nuevo
+   - Ejemplo en Postman: http://localhost:8080/kds/nuevo
+   - Body (JSON):
+     {
+         "estadoGeneral": "PENDIENTE"
+     }
+   - Respuesta esperada (200 OK):
+     {
+         "idTicket": 1,
+         "estadoGeneral": "PENDIENTE"
+     }

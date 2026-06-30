@@ -1,0 +1,45 @@
+================================================================================
+GARZONPRO - MANUAL DETALLADO DE ENDPOINTS (TODOS LOS MÉTODOS DEL CONTROLADOR)
+================================================================================
+Todos los microservicios están centralizados a través del API Gateway.
+PUERTO DEL GATEWAY: 8080 (localhost)
+--------------------------------------------------------------------------------
+MICROSERVICIO: PAYMENT-SERVICE (Puerto Interno: 8088)
+--------------------------------------------------------------------------------
+Prefijo en Gateway: /payments
+
+MÉTODO 1: Registrar un nuevo pago (Procesar)
+   - Tipo de Petición: POST
+   - URL: http://localhost:8080/payments/procesar
+   - Ejemplo en Postman: http://localhost:8080/payments/procesar
+   - Body (JSON):
+     {
+         "idPedido": 2,
+         "montoTotal": 15500.0,
+         "metodoPago": "EFECTIVO",
+         "estadoPago": "COMPLETADO"
+     }
+   - Respuesta esperada (200 OK):
+     {
+         "idPago": 1,
+         "idPedido": 2,
+         "montoTotal": 15500.0,
+         "metodoPago": "EFECTIVO",
+         "estadoPago": "COMPLETADO",
+         "fechaPago": "2026-06-29T22:14:51.228791"
+     }
+
+MÉTODO 2: Ver historial de pagos (Obtener todos)
+   - Tipo de Petición: GET
+   - URL: http://localhost:8080/payments/historial
+   - Ejemplo en Postman: http://localhost:8080/payments/historial
+   - Body: Ninguno (none)
+   - Respuesta esperada (200 OK): Un arreglo JSON `[...]` con todos los pagos registrados.
+
+MÉTODO 3: Obtener un pago específico por ID
+   - Tipo de Petición: GET
+   - URL: http://localhost:8080/payments/{id}
+   - Ejemplo en Postman: http://localhost:8080/payments/1
+   - Body: Ninguno (none)
+   - Respuesta esperada (200 OK): El objeto JSON del pago correspondiente al ID solicitado.
+================================================================================

@@ -11,5 +11,4 @@ public class TicketCocina {
     private Long idTicket;
 
     private String estadoGeneral; // Ejemplo: "En Preparación", "Listo"
-    // ... otros campos
 }
