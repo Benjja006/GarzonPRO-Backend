@@ -1,0 +1,44 @@
+MICROSERVICIO: REPORTING-SERVICE-CIERRES (Puerto Interno: 8088)
+Prefijo en Gateway: /reporting
+
+MÉTODO 1: Obtener el historial completo de cierres de caja
+
+Tipo de Petición: GET
+
+URL: http://localhost:8080/reporting/historial
+
+Ejemplo en Postman: http://localhost:8080/reporting/historial
+
+Body: Ninguno (none)
+
+Respuesta esperada (200 OK):
+[
+{
+"idCierre": 1,
+"fecha": "2026-06-30",
+"totalVentasDia": 150500.0,
+"cantidadPedidos": 25
+}
+]
+
+MÉTODO 2: Guardar un nuevo cierre de caja
+
+Tipo de Petición: POST
+
+URL: http://localhost:8080/reporting/guardar-cierre
+
+Ejemplo en Postman: http://localhost:8080/reporting/guardar-cierre
+
+Body (JSON):
+{
+"totalVentasDia": 210000.0,
+"cantidadPedidos": 18
+}
+
+Respuesta esperada (200 OK):
+{
+"idCierre": 2,
+"fecha": "2026-06-30",
+"totalVentasDia": 210000.0,
+"cantidadPedidos": 18
+}
