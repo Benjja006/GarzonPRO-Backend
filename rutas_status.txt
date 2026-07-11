@@ -1,0 +1,64 @@
+MICROSERVICIO: STATUS-SERVICE-NOTIFICACIONES (Puerto Interno: 8087)
+Prefijo en Gateway: /status
+
+MÉTODO 1: Enviar una nueva notificación a un garzón (Llamado por Cocina/KDS)
+
+Tipo de Petición: POST
+
+URL: http://localhost:8080/status/notificar
+
+Ejemplo en Postman: http://localhost:8080/status/notificar
+
+Body (JSON):
+{
+"idGarzonDestino": 5,
+"mensaje": "¡El plato para la mesa 3 está listo!"
+}
+
+Respuesta esperada (201 CREATED):
+{
+"id": 12,
+"mensaje": "¡El plato para la mesa 3 está listo!",
+"leida": false
+}
+
+MÉTODO 2: Obtener notificaciones pendientes (no leídas) de un garzón específico
+
+Tipo de Petición: GET
+
+URL: http://localhost:8080/status/pendientes/{idGarzon}
+
+Ejemplo en Postman: http://localhost:8080/status/pendientes/5
+
+Body: Ninguno (none)
+
+Respuesta esperada (200 OK): Retorna una lista con las alertas que el garzón aún no revisa.
+
+MÉTODO 3: Obtener el historial completo de notificaciones de un garzón
+
+Tipo de Petición: GET
+
+URL: http://localhost:8080/status/garzon/{idGarzon}
+
+Ejemplo en Postman: http://localhost:8080/status/garzon/5
+
+Body: Ninguno (none)
+
+Respuesta esperada (200 OK): Lista de todas las alertas recibidas en el turno (leídas y no leídas).
+
+MÉTODO 4: Marcar una notificación como leída
+
+Tipo de Petición: PUT
+
+URL: http://localhost:8080/status/leer/{id}
+
+Ejemplo en Postman: http://localhost:8080/status/leer/12
+
+Body: Ninguno (none)
+
+Respuesta esperada (200 OK):
+{
+"id": 12,
+"mensaje": "¡El plato para la mesa 3 está listo!",
+"leida": true
+}

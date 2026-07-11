@@ -1,0 +1,21 @@
+MICROSERVICIO: TABLE-SERVICE-MESAS (Puerto Interno: 8085)
+Prefijo en Gateway: /table
+
+MÉTODO 1: Listar todas las mesas del restaurante
+
+Tipo de Petición: GET
+
+URL: http://localhost:8080/table/listar
+
+Ejemplo en Postman: http://localhost:8080/table/listar
+
+Body: Ninguno (none)
+
+Respuesta esperada (200 OK):
+[
+{
+"idMesa": 1,
+"nombreMesa": "Mesa 4",
+"estado": "LIBRE"
+}
+]
