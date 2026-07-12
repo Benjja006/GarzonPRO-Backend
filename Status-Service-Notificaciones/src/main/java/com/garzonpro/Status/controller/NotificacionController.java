@@ -20,11 +20,8 @@ public class NotificacionController {
 
     private final NotificacionService notificacionService;
 
-    /**
-     * POST /status/notificar
-     * Crea una nueva notificación para un garzón.
-     * Este endpoint será llamado por KDS-Service cuando un plato esté listo.
-     */
+     // POST /status/notificar
+
     @PostMapping("/notificar")
     public ResponseEntity<NotificacionResponseDTO> enviarNotificacion(
             @Valid @RequestBody NotificacionRequestDTO dto) {
@@ -33,10 +30,7 @@ public class NotificacionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * GET /status/pendientes/{idGarzon}
-     * Retorna notificaciones no leídas de un garzón específico.
-     */
+    //GET /status/pendientes/{idGarzon}
     @GetMapping("/pendientes/{idGarzon}")
     public ResponseEntity<List<NotificacionResponseDTO>> obtenerPendientes(
             @PathVariable Long idGarzon) {
@@ -44,10 +38,8 @@ public class NotificacionController {
         return ResponseEntity.ok(notificacionService.obtenerPendientesPorGarzon(idGarzon));
     }
 
-    /**
-     * GET /status/garzon/{idGarzon}
-     * Retorna todas las notificaciones de un garzón (historial completo).
-     */
+    //GET /status/garzon/{idGarzon}
+
     @GetMapping("/garzon/{idGarzon}")
     public ResponseEntity<List<NotificacionResponseDTO>> obtenerTodas(
             @PathVariable Long idGarzon) {
@@ -55,10 +47,8 @@ public class NotificacionController {
         return ResponseEntity.ok(notificacionService.obtenerTodasPorGarzon(idGarzon));
     }
 
-    /**
-     * PUT /status/leer/{id}
-     * Marca una notificación como leída.
-     */
+
+     // PUT /status/leer/{id}
     @PutMapping("/leer/{id}")
     public ResponseEntity<NotificacionResponseDTO> marcarComoLeida(@PathVariable Long id) {
         log.info("Solicitud para marcar notificación ID: {} como leída", id);

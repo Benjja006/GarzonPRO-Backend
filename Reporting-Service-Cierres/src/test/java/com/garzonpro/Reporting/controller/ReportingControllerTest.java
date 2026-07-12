@@ -10,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -25,34 +26,78 @@ public class ReportingControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private CierreRepository repository; // Mockeamos directamente el repositorio aquí
+    private CierreRepository repository;
+
+    // ---------- GET /reporting/historial ----------
 
     @Test
     public void testObtenerHistorialExitoso() throws Exception {
         CierreCaja cierreMock = new CierreCaja();
-        // Si tu modelo CierreCaja tiene un ID u otra propiedad, puedes setearlo aquí si gustas:
-        // cierreMock.setId(1L);
+        cierreMock.setIdCierre(1L);
+        cierreMock.setFecha(LocalDate.of(2026, 7, 12));
+        cierreMock.setTotalVentasDia(150000.0);
+        cierreMock.setCantidadPedidos(25);
 
-        // Simulamos que el repositorio devuelve una lista con nuestro cierre ficticio
         Mockito.when(repository.findAll()).thenReturn(Collections.singletonList(cierreMock));
 
         mockMvc.perform(get("/reporting/historial")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()); // Verifica un 200 OK
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].idCierre").value(1))
+                .andExpect(jsonPath("$[0].totalVentasDia").value(150000.0))
+                .andExpect(jsonPath("$[0].cantidadPedidos").value(25));
     }
+
+    @Test
+    public void testObtenerHistorialVacio() throws Exception {
+        Mockito.when(repository.findAll()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/reporting/historial")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    // ---------- POST /reporting/guardar-cierre ----------
 
     @Test
     public void testGuardarCierreExitoso() throws Exception {
         CierreCaja cierreMock = new CierreCaja();
+        cierreMock.setIdCierre(1L);
+        cierreMock.setTotalVentasDia(150000.0);
+        cierreMock.setCantidadPedidos(25);
 
         Mockito.when(repository.save(any(CierreCaja.class))).thenReturn(cierreMock);
 
-        // JSON de prueba simulando el RequestBody del CierreCaja
-        String jsonCierre = "{\"totalVentas\":150000.0,\"comentarios\":\"Cierre de caja exitoso\"}";
+        String jsonCierre = "{\"totalVentasDia\":150000.0,\"cantidadPedidos\":25}";
 
         mockMvc.perform(post("/reporting/guardar-cierre")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonCierre))
-                .andExpect(status().isOk()); // Tu controlador devuelve un 200 OK por defecto
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.idCierre").value(1))
+                .andExpect(jsonPath("$.totalVentasDia").value(150000.0))
+                .andExpect(jsonPath("$.cantidadPedidos").value(25));
+    }
+
+    @Test
+    public void testGuardarCierreLlamaAlRepositorioConDatosCorrectos() throws Exception {
+        CierreCaja cierreMock = new CierreCaja();
+        cierreMock.setIdCierre(2L);
+        cierreMock.setTotalVentasDia(250000.0);
+        cierreMock.setCantidadPedidos(40);
+
+        Mockito.when(repository.save(any(CierreCaja.class))).thenReturn(cierreMock);
+
+        String jsonCierre = "{\"totalVentasDia\":250000.0,\"cantidadPedidos\":40}";
+
+        mockMvc.perform(post("/reporting/guardar-cierre")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonCierre))
+                .andExpect(status().isOk());
+
+        // Verifica que el controller efectivamente invocó save() exactamente una vez
+        Mockito.verify(repository, Mockito.times(1)).save(any(CierreCaja.class));
     }
 }
